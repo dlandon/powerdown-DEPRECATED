@@ -1,0 +1,26 @@
+powerdown:
+powerdown: powerdown  Control scripts for the unRAID server Environment.
+powerdown:
+powerdown: Copyright (C) 2008-2015 by Robert Cotrone & Dan Landon
+powerdown:
+powerdown: Adds /sbin/powerdown script to assist with quick unRAID poweroff
+powerdown:
+powerdown: Install Variable options:
+powerdown: CTRLALTDEL=yes set ctrl-alt-del to do powerdown instead of reboot
+powerdown: SYSLOG=YES     do initial syslog saving upon installation
+powerdown: STATUS=YES     Show status upon installation
+powerdown: START=YES      do initial start upon installation
+powerdown: 
+powerdown: Install with VAR's as defined above like:
+powerdown: VAR=YES OTHERVAR=YES installpkg powerdown-#.##-noarch-unRAID.tgz
+powerdown: Like Like: 
+powerdown: CTRLALTDEL=yes installpkg powerdown-#.##-noarch-unRAID.tgz
+powerdown: 
+powerdown: /etc/rc.d/rc.unRAID script has basic pre-power down functions
+powerdown: Hooks are placed in /etc/rc.d/rc.local_shutdown
+powerdown: to allow normal poweroff/shutdown commands do a graceful shutdown
+powerdown: 
+powerdown: Diagnostic mode for quick syslog dump/save to /boot/logs
+powerdown: call as /etc/rc.d/rc.unRAID diag
+powerdown: call as /etc/rc.d/rc.unRAID syslog 
+powerdown:

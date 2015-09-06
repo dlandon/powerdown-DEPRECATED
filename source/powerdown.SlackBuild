@@ -1,0 +1,99 @@
+#!/bin/sh
+#
+# Copyright (C) 2008-2015 by Robert Cotrone & Dan Landon
+#
+# This file is part of the Powerdown package for unRAID.
+#
+# Powerdown is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Powerdown is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Powerdown.  If not, see <http://www.gnu.org/licenses/>.
+#
+# based on the Slackware 14.1 SlackBuild
+# Packager Rob Cotrone  ( WeeboTech at mydomain dot com)
+# http://lime-technology.com
+# Required: 
+#
+
+CWD=`pwd`
+TMP=${TMP:-/tmp/tgz}
+PKG=$TMP/powerdown
+NAME=powerdown  
+VERSION=2.18
+ARCH=${ARCH:-noarch}
+BUILD=unRAID
+SOURCE=http://www.cotrone.com/rob/projects/unraid/$NAME-$VERSION.tar.gz
+
+if [ ! -e $NAME-$VERSION.tar.gz ]
+   then echo skipping wget -c $SOURCE
+fi
+
+if [ ! -d $TMP ]
+   then mkdir -p $TMP
+fi
+
+if [ ! -d $PKG ]
+   then mkdir -p $PKG
+   else rm -rf ${PKG}
+        mkdir ${PKG}
+fi
+
+cd $TMP
+# unused at this point
+# tar xvzf $CWD/$NAME-$VERSION.tar.gz
+
+echo -e "\E[0;32m+------------------------------------+\E[0;0m"
+echo -e "\E[0;32m| Start SlackBuild $NAME-$VERSION |\E[0;0m"
+echo -e "\E[0;32m+------------------------------------+\E[0;0m"
+
+# unused at this point
+# if [ ! -d $NAME-$VERSION ] 
+#    then mkdir -p $NAME-$VERSION
+# fi
+#
+# cd $NAME-$VERSION
+
+find . -perm 777 -exec chmod 755 {} \;
+find . -perm 775 -exec chmod 755 {} \;
+find . -perm 555 -exec chmod 755 {} \;
+find . -perm 666 -exec chmod 644 {} \;
+find . -perm 664 -exec chmod 644 {} \;
+find . -perm 444 -exec chmod 644 {} \;
+
+chown -R root:root .
+
+# Here is where the manual build install commands go.
+
+install -d ${PKG}/sbin
+install -d ${PKG}/usr/man
+install -p -m550 ${CWD}/powerdown ${PKG}/sbin
+install -d ${PKG}/etc/rc.d ${PKG}/etc/rc.d/rc.unRAID.d
+install -p -m550 ${CWD}/rc.unRAID ${PKG}/etc/rc.d
+
+# The rest should be standard on all installations
+
+mkdir -p $PKG/install
+mkdir -p $PKG/usr/doc/$NAME-$VERSION
+sed "s/#.##/${VERSION}/g" < ${CWD}/slack-desc > ${PKG}/install/slack-desc
+sed "s/#.##/${VERSION}/g" < ${CWD}/slack-desc > $PKG/usr/doc/$NAME-$VERSION/slack-desc
+cat $CWD/$NAME.SlackBuild > $PKG/usr/doc/$NAME-$VERSION/$NAME.SlackBuild
+cat $CWD/doinst.sh  > $PKG/install/doinst.sh
+
+# gzip -9 $PKG/usr/man/*/*
+find $PKG/usr/man -type f -exec gzip -9v {} \;
+
+cd $PKG
+requiredbuilder -y -v -s $CWD $PKG
+makepkg -l y -c n $CWD/$NAME-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$1" = "--cleanup" ]
+   then rm -rf $TMP
+fi

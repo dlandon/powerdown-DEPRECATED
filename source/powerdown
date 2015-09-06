@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# Copyright (C) 2008-2015 by Robert Cotrone & Dan Landon
+#
+# This file is part of the Powerdown package for unRAID.
+#
+# Powerdown is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Powerdown is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Powerdown.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+shopt -s expand_aliases
+alias logger="/usr/bin/logger -i -plocal7.info -tpowerdown" 
+
+[ ${DEBUG:=0} -gt 0 ] && set -x -v
+
+if [ -z "${1}" ]
+	then OPT="-h"
+	else OPT="${1}"
+fi
+
+logger "Powerdown initiated"
+echo "Powerdown initiated"
+
+# display version
+/etc/rc.d/rc.unRAID version
+/etc/rc.d/rc.unRAID version | logger
+
+if [ -f /var/run/powerdown.pid ]
+	then logger "Powerdown already active, this one is exiting"
+	exit
+	else echo $$ > /var/run/powerdown.pid
+fi
+
+trap "rm -f /var/run/powerdown.pid" EXIT HUP INT QUIT
+
+# process custom kill scripts before shutting down
+if [ -x /etc/rc.d/rc.unRAID ]
+then
+	/etc/rc.d/rc.unRAID kill_svcs
+	/etc/rc.d/rc.unRAID kill
+fi
+
+# Initiate shutdown
+logger "Initiating Shutdown with '${1}'"
+/sbin/shutdown -t5 ${OPT} now
+
+trap - EXIT HUP INT QUIT
+rm -f /var/run/powerdown.pid
