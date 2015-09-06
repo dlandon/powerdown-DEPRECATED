@@ -1,0 +1,151 @@
+<?xml version='1.0' standalone='yes'?>
+
+<!DOCTYPE PLUGIN [
+<!ENTITY name       "powerdown">
+<!ENTITY author     "WeeboTech/dlandon">
+<!ENTITY version    "2015.08.12">
+<!ENTITY pluginURL  "https://github.com/dlandon/powerdown/raw/master/powerdown-x86_64.plg">
+<!ENTITY pkgversion "2.18">
+]>
+
+<PLUGIN  name="&name;"
+         author="&author;"
+         version="&version;"
+         pluginURL="&pluginURL;">
+
+<CHANGES>
+##&name;
+###2015.08.12 (2.18)
+- Fix for compatibility to 6.1-rc3.
+- Fixed permissions.
+
+###2015.07.25 (2.17)
+- Rewrite of plugin READ.md.
+- Plugin now creates a default powerdown.conf.
+- Fixed the number of logs saved.  One too many was being saved.
+- Fixed an issue when the plugin is removed with reverting back to the built-in powerdown.
+
+###2015.07.24 (2.16)
+- Changes now show plugin and powerdown versions for clarity.
+- Fixed typo.
+
+###2015.05.17 (2.16)
+- Fixed a logic problem where /mnt/disk10 and /mnt/disk20 were being skipped when fuser was killing tasks.
+
+###2015.02.15 (2.15)
+- Changed 'fuser' killing processes to limit to /mnt/disk[1-9[1-9] and not /mnt/disks* which could cause some issues.
+
+###2015.05.15 (2.14)
+- Changed 'fuser' parameters from '-k' to '-mvk'.
+
+###2015.02.02 (2.13)
+- Fixed some issues with the K and S scripts.
+- Added KSV scripts that are called on the stopping_svcs event.  This event is ahead of the unmount event and can help in situations when you need to do some work ahead of the unmount event.
+
+###2014.11.24 (2.12)
+- Added logic to check for the array stopped.  If the array is stopped, powerdown doesn't do any other processing.  It only saves the current log to the flash drive.
+
+###2014.10.01 (2.11)
+- Added avahi stop.
+- Removed the rc script handling to shut down plugins and converted to the unmounting_disks event scripts.  Plugins are responsible to insure that they have an unmounting_disks script to shut down.
+- The operation of powerdown when shutting down now is equivalent to the way the unRAID webgui shuts down.
+
+###2014.09.30 (2.10)
+- Added rc.docker to the rcdstock list of files to skip and removed rc.cache_dirs.
+- Docker is now stopped in rc.unRAID.
+- Added netatalk stop to rc.unRAID.
+
+###2014.09.28 (2.09)
+- Removed rc.docker from the rcdstock list of files so docker will be stopped by powerdown now.
+- Added rc.cache_dirs to the list of files in rcdstock to ignore.  The cache_dirs plugins take care of stopping cache_dirs.
+- Added the the network check back into powerdown to prevent a plugin install failure if powerdown is removed from the plugin manager, and then unRAID is rebooted.  Because the network was not ready when the powerdown plugin tried to download the powerdown package, powerdown and the plugin trying to install the powerdown plugin would both fail.  i.e I found this when testing with the Apcupsd plugin.
+
+###2014.09.15 (2.08)
+- Added rc.rsyslog (V6 logging daemon) to the rcdstock list of files to skip when running the 'rc.xxx stop' commands.  Powerdown was stopping the rsyslog added in V6b9 which caused logging to terminate early.
+- Modified the powerdown plugin so the plugin updates properly.
+
+###2014.09.11 (2.07)
+- Added a configuration file so logging can be user modified.  The location of the log files and the number of logs to keep is user configurable.
+
+###2014.03.04 (2.06)
+- Initial unRAID V6 release.
+</CHANGES>
+
+<!--
+The plugin provides clean powerdown for unRAID systems.
+-->
+
+<!--
+Get the powerdown bundle.
+-->
+<FILE Name="/boot/config/plugins/&name;/&name;-&version;.tgz">
+<URL>"https://github.com/dlandon/powerdown/raw/master/&name;-&version;.tgz"</URL>
+</FILE>
+
+<!--
+Get the package.
+-->
+<FILE Name="/boot/packages/powerdown-&pkgversion;-noarch-unRAID.tgz" Run="CTRLALTDEL=YES upgradepkg --install-new">
+<URL>https://github.com/dlandon/powerdown/raw/master/powerdown-&pkgversion;-noarch-unRAID.tgz</URL>
+</FILE>
+
+<!--
+Prepare for installation.
+-->
+<FILE Run="/bin/bash">
+<INLINE>
+# Remove emhttp files so we can re-install.
+rm /usr/local/emhttp/plugins/&name;/* 2>/dev/null
+
+# Remove old 'package' files.
+rm -f $(ls /boot/packages/&name;*.tgz 2>/dev/null | grep -v '&pkgversion;')
+
+# Remove old 'bundle' files.
+rm -f $(ls /boot/config/plugins/&name;/&name;*.tgz 2>/dev/null | grep -v '&version;')
+
+# Install the 'bundle'.
+tar -xf /boot/config/plugins/&name;/&name;-&version;.tgz -C /usr/local/emhttp/plugins
+</INLINE>
+</FILE>
+
+<FILE Name="/boot/config/plugins/&name;/powerdown.conf">
+<INLINE>
+#
+# Powerdown configuration file.
+#
+# This is the directory where your logs are saved.
+#
+LOGDIR=/boot/logs/
+#
+# This is the number of logs to save.
+# Set zero to not save logs.
+# Set to -1 to save all logs.
+#
+LOGSAVE="10"
+</INLINE>
+</FILE>
+
+<!--
+The 'remove' script.
+-->
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+# Remove all plugin files.
+rm -f -r /usr/local/emhttp/plugins/&name;
+rm -f -r /boot/config/plugins/&name;
+
+# Remove the powerdown package.
+rm -f /boot/packages/powerdown-&pkgversion;-noarch-unRAID.tgz
+rm -f -r /etc/rc.d/rc.unRAID.d/*
+removepkg &name;
+
+# Put back the unRAID powerdown.
+if [ -f /usr/local/sbin/unraid_powerdown ]
+then
+   cp /usr/local/sbin/unraid_powerdown /sbin/powerdown
+   mv /usr/local/sbin/unraid_powerdown /usr/local/sbin/powerdown
+fi
+</INLINE>
+</FILE>
+
+</PLUGIN>
