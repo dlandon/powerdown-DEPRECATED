@@ -98,7 +98,7 @@ Prepare for installation.
 <FILE Run="/bin/bash">
 <INLINE>
 # Remove emhttp files so we can re-install.
-rm /usr/local/emhttp/plugins/&name;/* 2>/dev/null
+rm -f -r /usr/local/emhttp/plugins/&name;/* 2>/dev/null
 
 # Remove old 'package' files.
 rm -f $(ls /boot/packages/&name;*.tgz 2>/dev/null | grep -v '&pkgversion;')
