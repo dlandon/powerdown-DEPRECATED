@@ -22,8 +22,8 @@ rm -f /tmp/powerdown-prepare
 </FILE>
 
 
-<FILE Name="/boot/packages/powerdown-2.16-noarch-unRAID.tgz" Run="CTRLALTDEL=YES upgradepkg --install-new">
-<URL>--no-check-certificate https://github.com/dlandon/powerdown/raw/master/powerdown-2.17-noarch-unRAID.tgz</URL>
+<FILE Name="/boot/packages/powerdown-2.18-noarch-unRAID.tgz" Run="CTRLALTDEL=YES upgradepkg --install-new">
+<URL>--no-check-certificate https://github.com/dlandon/powerdown/raw/master/powerdown-2.18-noarch-unRAID.tgz</URL>
 </FILE>
 
 </PLUGIN>
