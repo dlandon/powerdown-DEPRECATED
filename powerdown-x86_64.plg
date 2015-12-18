@@ -3,9 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "powerdown">
 <!ENTITY author     "WeeboTech/dlandon">
-<!ENTITY version    "2015.09.06">
+<!ENTITY version    "2015.12.18">
 <!ENTITY pluginURL  "https://github.com/dlandon/powerdown/raw/master/powerdown-x86_64.plg">
 <!ENTITY pkgversion "2.18">
+<!ENTITY MD5pkg		"984aa92e076dc4a3fe8cb97045f6b240">
+<!ENTITY MD5		"a86a4ea59730d921acd3ba10ab27ddb5">
 ]>
 
 <PLUGIN  name="&name;"
@@ -15,6 +17,9 @@
 
 <CHANGES>
 ##&name;
+###&version; (2.18)
+- Added MD5 checksum to bundle and powerdown package files.
+
 ###2015.09.06 (2.18)
 - Moved powerdown repository.
 
@@ -83,6 +88,7 @@ Get the powerdown bundle.
 -->
 <FILE Name="/boot/config/plugins/&name;/&name;-&version;.tgz">
 <URL>"https://github.com/dlandon/powerdown/raw/master/&name;-&version;.tgz"</URL>
+<MD5>&MD5;</MD5>
 </FILE>
 
 <!--
@@ -90,6 +96,7 @@ Get the package.
 -->
 <FILE Name="/boot/packages/powerdown-&pkgversion;-noarch-unRAID.tgz" Run="CTRLALTDEL=YES upgradepkg --install-new">
 <URL>https://github.com/dlandon/powerdown/raw/master/powerdown-&pkgversion;-noarch-unRAID.tgz</URL>
+<MD5>&MD5pkg;</MD5>
 </FILE>
 
 <!--
