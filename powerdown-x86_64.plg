@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "powerdown">
 <!ENTITY author     "WeeboTech/dlandon">
-<!ENTITY version    "2015.12.18">
+<!ENTITY version    "2016.02.14">
 <!ENTITY pluginURL  "https://github.com/dlandon/powerdown/raw/master/powerdown-x86_64.plg">
-<!ENTITY pkgversion "2.18">
-<!ENTITY MD5pkg		"984aa92e076dc4a3fe8cb97045f6b240">
-<!ENTITY MD5		"a86a4ea59730d921acd3ba10ab27ddb5">
+<!ENTITY pkgversion "2.19">
+<!ENTITY MD5pkg		"95047d10572c84b44905a8eade3483b3">
+<!ENTITY MD5		"6ebe34c28e7004fbf474e55e3e0d7015">
 ]>
 
 <PLUGIN  name="&name;"
@@ -17,7 +17,10 @@
 
 <CHANGES>
 ##&name;
-###&version; (2.18)
+###&version; (&pkgversion;)
+- Fix plugin event directory missing.  Sxx.sh and Kxx.sh not working. 
+
+###2015.12.18 (2.18)
 - Added MD5 checksum to bundle and powerdown package files.
 
 ###2015.09.06 (2.18)
@@ -92,14 +95,6 @@ Get the powerdown bundle.
 </FILE>
 
 <!--
-Get the package.
--->
-<FILE Name="/boot/packages/powerdown-&pkgversion;-noarch-unRAID.tgz" Run="CTRLALTDEL=YES upgradepkg --install-new">
-<URL>https://github.com/dlandon/powerdown/raw/master/powerdown-&pkgversion;-noarch-unRAID.tgz</URL>
-<MD5>&MD5pkg;</MD5>
-</FILE>
-
-<!--
 Prepare for installation.
 -->
 <FILE Run="/bin/bash">
@@ -116,6 +111,14 @@ rm -f $(ls /boot/config/plugins/&name;/&name;*.tgz 2>/dev/null | grep -v '&versi
 # Install the 'bundle'.
 tar -xf /boot/config/plugins/&name;/&name;-&version;.tgz -C /usr/local/emhttp/plugins
 </INLINE>
+</FILE>
+
+<!--
+Get the package.
+-->
+<FILE Name="/boot/packages/powerdown-&pkgversion;-noarch-unRAID.tgz" Run="CTRLALTDEL=YES upgradepkg --install-new">
+<URL>https://github.com/dlandon/powerdown/raw/master/powerdown-&pkgversion;-noarch-unRAID.tgz</URL>
+<MD5>&MD5pkg;</MD5>
 </FILE>
 
 <FILE Name="/boot/config/plugins/&name;/powerdown.conf">

@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2008-2015 by Robert Cotrone & Dan Landon
+# Copyright (C) 2008-2016 by Robert Cotrone & Dan Landon
 #
 # This file is part of the Powerdown package for unRAID.
 #
@@ -27,7 +27,7 @@ CWD=`pwd`
 TMP=${TMP:-/tmp/tgz}
 PKG=$TMP/powerdown
 NAME=powerdown  
-VERSION=2.18
+VERSION=2.19
 ARCH=${ARCH:-noarch}
 BUILD=unRAID
 SOURCE=http://www.cotrone.com/rob/projects/unraid/$NAME-$VERSION.tar.gz
@@ -97,3 +97,5 @@ makepkg -l y -c n $CWD/$NAME-$VERSION-$ARCH-$BUILD.tgz
 if [ "$1" = "--cleanup" ]
    then rm -rf $TMP
 fi
+
+md5sum $CWD/$NAME-$VERSION-$ARCH-$BUILD.tgz > $CWD/MD5pkg

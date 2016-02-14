@@ -1,7 +1,7 @@
 powerdown:
 powerdown: powerdown  Control scripts for the unRAID server Environment.
 powerdown:
-powerdown: Copyright (C) 2008-2015 by Robert Cotrone & Dan Landon
+powerdown: Copyright (C) 2008-2016 by Robert Cotrone & Dan Landon
 powerdown:
 powerdown: Adds /sbin/powerdown script to assist with quick unRAID poweroff
 powerdown:

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2008-2015 by Robert Cotrone & Dan Landon
+# Copyright (C) 2008-2016 by Robert Cotrone & Dan Landon
 #
 # This file is part of the Powerdown package for unRAID.
 #
@@ -19,7 +19,7 @@
 #
 # Stop unRAID.
 #
-VERSION="2.18"
+VERSION="2.19"
 
 [ ${DEBUG:=0} -gt 0 ] && set -x -v
 

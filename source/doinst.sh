@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2008-2015 by Robert Cotrone & Dan Landon
+# Copyright (C) 2008-2016 by Robert Cotrone & Dan Landon
 #
 # This file is part of the Powerdown package for unRAID.
 #
