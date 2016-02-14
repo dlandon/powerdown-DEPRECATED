@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "powerdown">
 <!ENTITY author     "WeeboTech/dlandon">
-<!ENTITY version    "2016.02.14">
+<!ENTITY version    "2016.02.14a">
 <!ENTITY pluginURL  "https://github.com/dlandon/powerdown/raw/master/powerdown-x86_64.plg">
 <!ENTITY pkgversion "2.19">
 <!ENTITY MD5pkg		"95047d10572c84b44905a8eade3483b3">
-<!ENTITY MD5		"6ebe34c28e7004fbf474e55e3e0d7015">
+<!ENTITY MD5		"9be538355a486c4acbb063e4814c8ed3">
 ]>
 
 <PLUGIN  name="&name;"
@@ -100,7 +100,7 @@ Prepare for installation.
 <FILE Run="/bin/bash">
 <INLINE>
 # Remove emhttp files so we can re-install.
-rm -f -r /usr/local/emhttp/plugins/&name;/* 2>/dev/null
+rm -f /usr/local/emhttp/plugins/&name;/* 2>/dev/null
 
 # Remove old 'package' files.
 rm -f $(ls /boot/packages/&name;*.tgz 2>/dev/null | grep -v '&pkgversion;')
