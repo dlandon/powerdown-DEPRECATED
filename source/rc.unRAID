@@ -19,7 +19,7 @@
 #
 # Stop unRAID.
 #
-VERSION="2.19"
+VERSION="2.20"
 
 [ ${DEBUG:=0} -gt 0 ] && set -x -v
 

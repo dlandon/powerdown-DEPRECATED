@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "powerdown">
 <!ENTITY author     "WeeboTech/dlandon">
-<!ENTITY version    "2016.02.14a">
+<!ENTITY version    "2016.03.26">
 <!ENTITY pluginURL  "https://github.com/dlandon/powerdown/raw/master/powerdown-x86_64.plg">
-<!ENTITY pkgversion "2.19">
-<!ENTITY MD5pkg		"95047d10572c84b44905a8eade3483b3">
-<!ENTITY MD5		"9be538355a486c4acbb063e4814c8ed3">
+<!ENTITY pkgversion "2.20">
+<!ENTITY MD5pkg		"f5a013e6486bcd8c0967f6e20ffa5c9f">
+<!ENTITY MD5		"6a15eeefe3dedff3ea93afd41fcc1ea8">
 ]>
 
 <PLUGIN  name="&name;"
@@ -18,6 +18,9 @@
 <CHANGES>
 ##&name;
 ###&version; (&pkgversion;)
+- Add save diagnostics to flash drive on shutdown.
+
+###2016.02.14a
 - Fix plugin event directory missing.  Sxx.sh and Kxx.sh not working. 
 
 ###2015.12.18 (2.18)

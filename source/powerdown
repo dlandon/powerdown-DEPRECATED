@@ -43,6 +43,12 @@ fi
 
 trap "rm -f /var/run/powerdown.pid" EXIT HUP INT QUIT
 
+# capture the system diagnostics
+logger "Capture diagnostics to /boot/logs"
+echo "Capture diagnostics to /boot/logs"
+rm -f /boot/logs/*diagnostics*.zip
+/usr/local/sbin/diagnostics
+
 # process custom kill scripts before shutting down
 if [ -x /etc/rc.d/rc.unRAID ]
 then
