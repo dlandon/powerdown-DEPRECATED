@@ -20,7 +20,7 @@
 ###&version; (&pkgversion;)
 - Add save diagnostics to flash drive on shutdown.
 
-###2016.02.14a
+###2016.02.14a (2.19)
 - Fix plugin event directory missing.  Sxx.sh and Kxx.sh not working. 
 
 ###2015.12.18 (2.18)
