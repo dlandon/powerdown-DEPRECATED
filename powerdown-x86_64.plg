@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "powerdown">
 <!ENTITY author     "WeeboTech/dlandon">
-<!ENTITY version    "2016.03.26">
+<!ENTITY version    "2016.04.23">
 <!ENTITY pluginURL  "https://github.com/dlandon/powerdown/raw/master/powerdown-x86_64.plg">
 <!ENTITY pkgversion "2.20">
-<!ENTITY MD5pkg		"f5a013e6486bcd8c0967f6e20ffa5c9f">
-<!ENTITY MD5		"6a15eeefe3dedff3ea93afd41fcc1ea8">
+<!ENTITY MD5pkg		"ce5e81258925dd4658ba1bef5bbed494">
+<!ENTITY MD5		"2e971f3a6d8064d83dd1e4fd0e0e01bb">
 ]>
 
 <PLUGIN  name="&name;"
@@ -18,6 +18,9 @@
 <CHANGES>
 ##&name;
 ###&version; (&pkgversion;)
+- Move powerdown package to /flash/config/plugins/powerdown and rename to be more consistent with V6.
+
+###2016.03.26 (2.20)
 - Add save diagnostics to flash drive on shutdown.
 
 ###2016.02.14a (2.19)
@@ -98,6 +101,14 @@ Get the powerdown bundle.
 </FILE>
 
 <!--
+Get the powerdown package.
+-->
+<FILE Name="/boot/config/plugins/&name;/powerdown-&pkgversion;-noarch-unRAID.txz" Run="CTRLALTDEL=YES upgradepkg --install-new">
+<URL>https://github.com/dlandon/powerdown/raw/master/powerdown-&pkgversion;-noarch-unRAID.txz</URL>
+<MD5>&MD5pkg;</MD5>
+</FILE>
+
+<!--
 Prepare for installation.
 -->
 <FILE Run="/bin/bash">
@@ -106,7 +117,7 @@ Prepare for installation.
 rm -f /usr/local/emhttp/plugins/&name;/* 2>/dev/null
 
 # Remove old 'package' files.
-rm -f $(ls /boot/packages/&name;*.tgz 2>/dev/null | grep -v '&pkgversion;')
+rm -f $(ls /boot/config/plugins/&name;/&name;*.txz 2>/dev/null | grep -v '&pkgversion;')
 
 # Remove old 'bundle' files.
 rm -f $(ls /boot/config/plugins/&name;/&name;*.tgz 2>/dev/null | grep -v '&version;')
@@ -114,14 +125,6 @@ rm -f $(ls /boot/config/plugins/&name;/&name;*.tgz 2>/dev/null | grep -v '&versi
 # Install the 'bundle'.
 tar -xf /boot/config/plugins/&name;/&name;-&version;.tgz -C /usr/local/emhttp/plugins
 </INLINE>
-</FILE>
-
-<!--
-Get the package.
--->
-<FILE Name="/boot/packages/powerdown-&pkgversion;-noarch-unRAID.tgz" Run="CTRLALTDEL=YES upgradepkg --install-new">
-<URL>https://github.com/dlandon/powerdown/raw/master/powerdown-&pkgversion;-noarch-unRAID.tgz</URL>
-<MD5>&MD5pkg;</MD5>
 </FILE>
 
 <FILE Name="/boot/config/plugins/&name;/powerdown.conf">
@@ -149,10 +152,9 @@ The 'remove' script.
 # Remove all plugin files.
 rm -f -r /usr/local/emhttp/plugins/&name;
 rm -f -r /boot/config/plugins/&name;
+rm -f -r /etc/rc.d/rc.unRAID.d/*
 
 # Remove the powerdown package.
-rm -f /boot/packages/powerdown-&pkgversion;-noarch-unRAID.tgz
-rm -f -r /etc/rc.d/rc.unRAID.d/*
 removepkg &name;
 
 # Put back the unRAID powerdown.
