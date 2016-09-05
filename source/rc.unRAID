@@ -19,7 +19,7 @@
 #
 # Stop unRAID.
 #
-VERSION="2.20"
+VERSION="2.21"
 
 [ ${DEBUG:=0} -gt 0 ] && set -x -v
 
@@ -230,18 +230,8 @@ unRAID_stop()
 	then
 		if [ -n "`cat /proc/mdcmd | grep "mdState=STARTED"`" ]
 		then
-			logger "Stopping Plugins."
 
-			# Invoke all 'any_event' scripts that might exist
-			for Dir in /usr/local/emhttp/plugins/*
-			do
-			  if [ -x $Dir/event/any_event ]; then
-				logger Running: \"$Dir/event/any_event\"
-				$Dir/event/any_event | logger
-			  fi
-			done
-
-			# Invoke specific event scripts that might exist for this event
+			# Invoke specific event scripts that might exist for the stopping_svcs event
 			for Dir in /usr/local/emhttp/plugins/*
 			do
 			  if [ -x $Dir/event/stopping_svcs ]; then
@@ -250,7 +240,23 @@ unRAID_stop()
 			  fi
 			done
 
-			# Invoke specific event scripts that might exist for this event
+			logger "Shutting down all VMs..."
+			[ -x /etc/rc.d/rc.libvirt ] && /etc/rc.d/rc.libvirt stop
+
+			logger "Shutting down all Dockers..."
+			[ -x /etc/rc.d/rc.docker ] && /etc/rc.d/rc.docker stop
+
+			logger "Stopping Plugins."
+			# Invoke all 'any_event' scripts that might exist for the any_event event
+			for Dir in /usr/local/emhttp/plugins/*
+			do
+			  if [ -x $Dir/event/any_event ]; then
+				logger Running: \"$Dir/event/any_event\"
+				$Dir/event/any_event | logger
+			  fi
+			done
+
+			# Invoke specific event scripts that might exist for the unmounting_svcs event
 			for Dir in /usr/local/emhttp/plugins/*
 			do
 			  if [ -x $Dir/event/unmounting_disks ]; then
@@ -260,11 +266,13 @@ unRAID_stop()
 			done
 
 			logger "Stopping unRAID."
-
 			[ -x /etc/rc.d/rc.avahidaemon ] && /etc/rc.d/rc.avahidaemon stop
-			[ -x /etc/rc.d/rc.samba  ] && /etc/rc.d/rc.samba  stop
-			[ -x /etc/rc.d/rc.nfsd   ] && /etc/rc.d/rc.nfsd   stop
-			[ -x /etc/rc.d/rc.atalk  ] && /etc/rc.d/rc.atalk  stop
+			[ -x /etc/rc.d/rc.samba ] && /etc/rc.d/rc.samba stop
+			[ -x /etc/rc.d/rc.nfsd ] && /etc/rc.d/rc.nfsd stop
+			[ -x /etc/rc.d/rc.atalk ] && /etc/rc.d/rc.atalk stop
+			[ -x /etc/rc.d/rc.sshd ] && /etc/rc.d/rc.sshd stop
+			[ -x /etc/rc.d/rc.saslauthd ] && /etc/rc.d/rc.saslauthd stop
+			[ -x /etc/rc.d/rc.messagebus ] && sh /etc/rc.d/rc.messagebus stop
 
 			swapoff -av 2>&1  | logger
 

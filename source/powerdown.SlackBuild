@@ -27,7 +27,7 @@ CWD=`pwd`
 TMP=${TMP:-/tmp/tgz}
 PKG=$TMP/powerdown
 NAME=powerdown  
-VERSION=2.20
+VERSION=2.21
 ARCH=${ARCH:-noarch}
 BUILD=unRAID
 SOURCE=http://www.cotrone.com/rob/projects/unraid/$NAME-$VERSION.tar.gz
@@ -92,10 +92,10 @@ find $PKG/usr/man -type f -exec gzip -9v {} \;
 
 cd $PKG
 requiredbuilder -y -v -s $CWD $PKG
-makepkg -l y -c n $CWD/$NAME-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $CWD/$NAME-$VERSION-$ARCH-$BUILD.txz
 
 if [ "$1" = "--cleanup" ]
    then rm -rf $TMP
 fi
 
-md5sum $CWD/$NAME-$VERSION-$ARCH-$BUILD.tgz > $CWD/MD5pkg
+md5sum $CWD/$NAME-$VERSION-$ARCH-$BUILD.txz > $CWD/MD5pkg

@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "powerdown">
 <!ENTITY author     "WeeboTech/dlandon">
-<!ENTITY version    "2016.04.23">
+<!ENTITY version    "2016.09.05">
 <!ENTITY pluginURL  "https://github.com/dlandon/powerdown/raw/master/powerdown-x86_64.plg">
-<!ENTITY pkgversion "2.20">
-<!ENTITY MD5pkg		"ce5e81258925dd4658ba1bef5bbed494">
-<!ENTITY MD5		"2e971f3a6d8064d83dd1e4fd0e0e01bb">
+<!ENTITY pkgversion "2.21">
+<!ENTITY MD5pkg		"63c840f7173d435905622efd91ace29c">
+<!ENTITY MD5		"bf9f2ff3c50d027eea2626a7f0f461ad">
 ]>
 
 <PLUGIN  name="&name;"
@@ -18,6 +18,9 @@
 <CHANGES>
 ##&name;
 ###&version; (&pkgversion;)
+- Updated for v6.2.  Docker and libvirt are no longer shutdown by events and have to be specifically shutdown.
+
+###2016.04.23 (2.20)
 - Move powerdown package to /flash/config/plugins/powerdown and rename to be more consistent with V6.
 
 ###2016.03.26 (2.20)
