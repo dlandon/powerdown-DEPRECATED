@@ -19,7 +19,7 @@
 #
 # Stop unRAID.
 #
-VERSION="2.21"
+VERSION="2.22"
 
 [ ${DEBUG:=0} -gt 0 ] && set -x -v
 
@@ -246,7 +246,7 @@ unRAID_stop()
 			logger "Shutting down all Dockers..."
 			[ -x /etc/rc.d/rc.docker ] && /etc/rc.d/rc.docker stop
 
-			logger "Stopping Plugins."
+			logger "Stopping Plugins..."
 			# Invoke all 'any_event' scripts that might exist for the any_event event
 			for Dir in /usr/local/emhttp/plugins/*
 			do
@@ -290,9 +290,24 @@ unRAID_stop()
 
 			echo "Unmounting the drives"
 			logger "Umounting the drives"
+			# Array drives.
 			for disk in /dev/md*
 			do  /bin/umount -vf ${disk}
 			done 2>&1 | logger
+
+			# Unmount docker.img
+			if [ -f /boot/config/docker.cfg ]
+			then
+				source /boot/config/docker.cfg
+				/bin/umount -vf ${DOCKER_IMAGE_FILE} 2>&1 >/dev/null
+			fi
+
+			# Unmount libvirt.img
+			if [ -f /boot/config/domain.cfg ]
+			then
+				source /boot/config/domain.cfg
+				/bin/umount -vf ${IMAGE_FILE} 2>&1 >/dev/null
+			fi
 
 			PSTMP="/tmp/ps.$$"
 			/usr/bin/fuser -mv /dev/md* 2>&1 > ${PSTMP}
