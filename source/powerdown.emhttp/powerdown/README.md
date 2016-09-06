@@ -1,3 +1,3 @@
-**Powerdown Package (2.20)**
+**Powerdown Package (2.22)**
 
 This plugin enhances the built in shutdown scripts.  The custom powerdown script package is installed that augments the built in scripts for the clean shutdown and reboot of unRAID.  Additional features like archiving system logs and additional start and stop control with custom scripts are added.  The system log is archived to the flash drive in the /flash/logs directory on shutdown.  If a process is preventing a shutdown, the built-in procedure can hang preventing the shutdown.  The custom powerdown package will shutdown unRAID and prevent it from hanging waiting for a process to stop.  Events that can initiate a shutdown are UPS power loss, power button press, and cli commands.
