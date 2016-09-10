@@ -19,7 +19,7 @@
 #
 # Stop unRAID.
 #
-VERSION="2.22"
+VERSION="2.23"
 
 [ ${DEBUG:=0} -gt 0 ] && set -x -v
 
@@ -226,11 +226,16 @@ unRAID_stop()
 
 	logger "Powerdown V$VERSION"
 
+	# capture the system diagnostics
+	logger "Capture diagnostics to /boot/logs"
+	echo "Capture diagnostics to /boot/logs"
+	rm -f /boot/logs/*diagnostics*.zip
+	/usr/local/sbin/diagnostics
+
 	if [ -e /proc/mdcmd ]
 	then
 		if [ -n "`cat /proc/mdcmd | grep "mdState=STARTED"`" ]
 		then
-
 			# Invoke specific event scripts that might exist for the stopping_svcs event
 			for Dir in /usr/local/emhttp/plugins/*
 			do
@@ -267,6 +272,7 @@ unRAID_stop()
 
 			logger "Stopping unRAID."
 			[ -x /etc/rc.d/rc.avahidaemon ] && /etc/rc.d/rc.avahidaemon stop
+			[ -x /etc/rc.d/rc.avahidaemon ] && /etc/rc.d/rc.avahidnsconfd stop
 			[ -x /etc/rc.d/rc.samba ] && /etc/rc.d/rc.samba stop
 			[ -x /etc/rc.d/rc.nfsd ] && /etc/rc.d/rc.nfsd stop
 			[ -x /etc/rc.d/rc.atalk ] && /etc/rc.d/rc.atalk stop
@@ -276,7 +282,7 @@ unRAID_stop()
 
 			swapoff -av 2>&1  | logger
 
-			mount | grep loop | while read FS THE_REST
+			/bin/mount | grep loop | while read FS THE_REST
 			do   umount -vf $FS;
 			done 2>&1 | logger
 
@@ -286,7 +292,7 @@ unRAID_stop()
 
 			echo "Sync filesystems"
 			logger "Sync filesystems"
-			sync
+			/bin/sync
 
 			echo "Unmounting the drives"
 			logger "Umounting the drives"
@@ -295,24 +301,25 @@ unRAID_stop()
 			do  /bin/umount -vf ${disk}
 			done 2>&1 | logger
 
-			# Unmount docker.img
-			if [ -f /boot/config/docker.cfg ]
-			then
+			# Unmount docker.img if mounted
+			if [ -f /boot/config/docker.cfg ]; then
 				source /boot/config/docker.cfg
-				/bin/umount -vf ${DOCKER_IMAGE_FILE} 2>&1 >/dev/null
+				if [ "`/bin/mount | grep ${DOCKER_IMAGE_FILE}`" != "" ]; then
+					/bin/umount -vf ${DOCKER_IMAGE_FILE} 2>&1 >/dev/null
+				fi
 			fi
 
-			# Unmount libvirt.img
-			if [ -f /boot/config/domain.cfg ]
-			then
+			# Unmount libvirt.img if mounted
+			if [ -f /boot/config/domain.cfg ]; then
 				source /boot/config/domain.cfg
-				/bin/umount -vf ${IMAGE_FILE} 2>&1 >/dev/null
+				if [ "`/bin/mount | grep ${IMAGE_FILE}`" != "" ]; then
+					/bin/umount -vf ${IMAGE_FILE} 2>&1 >/dev/null
+				fi
 			fi
 
 			PSTMP="/tmp/ps.$$"
 			/usr/bin/fuser -mv /dev/md* 2>&1 > ${PSTMP}
-			if [ -s "${PSTMP}" ]
-			then
+			if [ -s "${PSTMP}" ]; then
 				logger "Active pids left on the array drives"
 				/usr/bin/fuser -mv /dev/md* 2>&1 | logger
 			fi

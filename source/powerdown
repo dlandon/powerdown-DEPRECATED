@@ -31,10 +31,6 @@ fi
 logger "Powerdown initiated"
 echo "Powerdown initiated"
 
-# display version
-/etc/rc.d/rc.unRAID version
-/etc/rc.d/rc.unRAID version | logger
-
 if [ -f /var/run/powerdown.pid ]
 	then logger "Powerdown already active, this one is exiting"
 	exit
@@ -42,19 +38,6 @@ if [ -f /var/run/powerdown.pid ]
 fi
 
 trap "rm -f /var/run/powerdown.pid" EXIT HUP INT QUIT
-
-# capture the system diagnostics
-logger "Capture diagnostics to /boot/logs"
-echo "Capture diagnostics to /boot/logs"
-rm -f /boot/logs/*diagnostics*.zip
-/usr/local/sbin/diagnostics
-
-# process custom kill scripts before shutting down
-if [ -x /etc/rc.d/rc.unRAID ]
-then
-	/etc/rc.d/rc.unRAID kill_svcs
-	/etc/rc.d/rc.unRAID kill
-fi
 
 # Initiate shutdown
 logger "Initiating Shutdown with '${1}'"
