@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "powerdown">
 <!ENTITY author     "WeeboTech/dlandon">
-<!ENTITY version    "2016.09.10">
+<!ENTITY version    "2016.09.15">
 <!ENTITY pluginURL  "https://github.com/dlandon/powerdown/raw/master/powerdown-x86_64.plg">
 <!ENTITY pkgversion "2.23">
 <!ENTITY MD5pkg		"d3743f0f186b28c7cd10610e93af15cb">
-<!ENTITY MD5		"d2bd89a096c567067f8f25a1e5eb24ac">
+<!ENTITY MD5		"39c4a2f2cb4b9b5a8fb37616928f96c3">
 ]>
 
 <PLUGIN  name="&name;"
@@ -18,6 +18,9 @@
 <CHANGES>
 ##&name;
 ###&version; (&pkgversion;)
+- Powerdown is not necessary and will not install in unRAID 6.2 and later.
+
+###2016.09.10
 - Additional changes for 6.2 compatibility and some cleanup.
 
 ###2016.09.06
@@ -96,6 +99,27 @@
 ###2014.03.04 (2.06)
 - Initial unRAID V6 release.
 </CHANGES>
+
+<!-- The 'pre-install' script. -->
+<FILE Run="/usr/bin/php">
+<INLINE>
+<![CDATA[
+<?
+  $version = parse_ini_file("/etc/unraid-version");
+  
+  if ( version_compare($version['version'],"6.2", ">=") )
+  {
+    echo "********************************************************************\n";
+    echo "\n";
+    echo "The powerdown plugin is not necessary on unRaid 6.2 or greater\n";
+    echo "\n";
+    echo "********************************************************************\n";
+    exit(1);
+  }
+?>
+]]>
+</INLINE>
+</FILE>
 
 <!--
 The plugin provides clean powerdown for unRAID systems.
