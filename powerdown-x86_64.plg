@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "powerdown">
 <!ENTITY author     "WeeboTech/dlandon">
-<!ENTITY version    "2016.09.15">
+<!ENTITY version    "2016.09.24">
 <!ENTITY pluginURL  "https://github.com/dlandon/powerdown/raw/master/powerdown-x86_64.plg">
-<!ENTITY pkgversion "2.23">
-<!ENTITY MD5pkg		"d3743f0f186b28c7cd10610e93af15cb">
-<!ENTITY MD5		"39c4a2f2cb4b9b5a8fb37616928f96c3">
+<!ENTITY pkgversion "2.24">
+<!ENTITY MD5pkg		"533eb1e54eaff5efa712660ff71cce5a">
+<!ENTITY MD5		"5557e8cb6b3f6c6b4cf87cdc7abdf515">
 ]>
 
 <PLUGIN  name="&name;"
@@ -18,12 +18,15 @@
 <CHANGES>
 ##&name;
 ###&version; (&pkgversion;)
-- Powerdown is not necessary and will not install in unRAID 6.2 and later.
+- Some cleanup for 6.1.9.  This will be the last update.
 
-###2016.09.10
+###2016.09.15 (2.23)
+- Powerdown is not needed and will not install in unRAID 6.2 and later.  It has not been fully tested for 6.2.
+
+###2016.09.10 (2.23)
 - Additional changes for 6.2 compatibility and some cleanup.
 
-###2016.09.06
+###2016.09.06 (2.22)
 - Additional changes for 6.2 compatibility.
 
 ###2016.09.05 (2.21)

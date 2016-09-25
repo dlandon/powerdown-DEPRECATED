@@ -19,7 +19,7 @@
 #
 # Stop unRAID.
 #
-VERSION="2.23"
+VERSION="2.24"
 
 [ ${DEBUG:=0} -gt 0 ] && set -x -v
 
@@ -190,7 +190,7 @@ unRAID_pid_check()
 	# find active pids on array save to tmp file
 	# so size (-s) can be tested and print if > 0
 	PSTMP="/tmp/ps.$$"
-	/usr/bin/fuser -mv /mnt/disk{[12][1-9],[1-9]} /mnt/cache /mnt/user/* /dev/md* 2>/dev/null > ${PSTMP}
+	/usr/bin/fuser -mv /mnt/disk*[!s] /mnt/cache /mnt/user/* /dev/md* 2>&1 > ${PSTMP}
 
 	if [ -s "${PSTMP}" ]
 	   then echo -e "Active PIDS on the array"
@@ -226,6 +226,8 @@ unRAID_stop()
 
 	logger "Powerdown V$VERSION"
 
+	beep -r 2
+
 	# capture the system diagnostics
 	logger "Capture diagnostics to /boot/logs"
 	echo "Capture diagnostics to /boot/logs"
@@ -245,12 +247,15 @@ unRAID_stop()
 			  fi
 			done
 
+			echo "Shutting down all VMs..."
 			logger "Shutting down all VMs..."
-			[ -x /etc/rc.d/rc.libvirt ] && /etc/rc.d/rc.libvirt stop
+			[ -x /etc/rc.d/rc.libvirt ] && /etc/rc.d/rc.libvirt stop | logger
 
+			echo "Shutting down all Dockers..."
 			logger "Shutting down all Dockers..."
-			[ -x /etc/rc.d/rc.docker ] && /etc/rc.d/rc.docker stop
+			[ -x /etc/rc.d/rc.docker ] && /etc/rc.d/rc.docker stop | logger
 
+			echo "Stopping Plugins..."
 			logger "Stopping Plugins..."
 			# Invoke all 'any_event' scripts that might exist for the any_event event
 			for Dir in /usr/local/emhttp/plugins/*
@@ -261,7 +266,7 @@ unRAID_stop()
 			  fi
 			done
 
-			# Invoke specific event scripts that might exist for the unmounting_svcs event
+			# Invoke specific event scripts that might exist for the unmounting_disks event
 			for Dir in /usr/local/emhttp/plugins/*
 			do
 			  if [ -x $Dir/event/unmounting_disks ]; then
@@ -270,53 +275,61 @@ unRAID_stop()
 			  fi
 			done
 
-			logger "Stopping unRAID."
-			[ -x /etc/rc.d/rc.avahidaemon ] && /etc/rc.d/rc.avahidaemon stop
-			[ -x /etc/rc.d/rc.avahidaemon ] && /etc/rc.d/rc.avahidnsconfd stop
-			[ -x /etc/rc.d/rc.samba ] && /etc/rc.d/rc.samba stop
-			[ -x /etc/rc.d/rc.nfsd ] && /etc/rc.d/rc.nfsd stop
-			[ -x /etc/rc.d/rc.atalk ] && /etc/rc.d/rc.atalk stop
-			[ -x /etc/rc.d/rc.sshd ] && /etc/rc.d/rc.sshd stop
-			[ -x /etc/rc.d/rc.saslauthd ] && /etc/rc.d/rc.saslauthd stop
-			[ -x /etc/rc.d/rc.messagebus ] && sh /etc/rc.d/rc.messagebus stop
+			echo "Stopping unRAID..."
+			logger "Stopping unRAID..."
+			[ -x /etc/rc.d/rc.avahidaemon ] && /etc/rc.d/rc.avahidaemon stop | logger
+			[ -x /etc/rc.d/rc.avahidaemon ] && /etc/rc.d/rc.avahidnsconfd stop | logger
+			[ -x /etc/rc.d/rc.samba ] && /etc/rc.d/rc.samba stop | logger
+			[ -x /etc/rc.d/rc.nfsd ] && /etc/rc.d/rc.nfsd stop | logger
+			[ -x /etc/rc.d/rc.atalk ] && /etc/rc.d/rc.atalk stop | logger
+			[ -x /etc/rc.d/rc.sshd ] && /etc/rc.d/rc.sshd stop | logger
+			[ -x /etc/rc.d/rc.saslauthd ] && /etc/rc.d/rc.saslauthd stop | logger
 
 			swapoff -av 2>&1  | logger
 
+			# Unmount loop devices.
 			/bin/mount | grep loop | while read FS THE_REST
 			do   umount -vf $FS;
 			done 2>&1 | logger
 
-			echo "Killing active pids on the array drives"
-			logger "Killing active pids on the array drives"
-			/usr/bin/fuser -mvk /mnt/user/* /mnt/disk{[12][1-9],[1-9]} /mnt/cache /dev/md* 2>&1 | logger
+			echo "Killing active pids on the array drives..."
+			logger "Killing active pids on the array drives..."
+			/usr/bin/fuser -mvk /mnt/user/* /mnt/disk*[!s] /mnt/cache /dev/md* 2>&1 | logger
 
-			echo "Sync filesystems"
-			logger "Sync filesystems"
+			echo "Sync filesystems..."
+			logger "Sync filesystems..."
+			sleep 2
 			/bin/sync
 
-			echo "Unmounting the drives"
-			logger "Umounting the drives"
+			echo "Unmounting the drives..."
+			logger "Umounting the drives..."
 			# Array drives.
 			for disk in /dev/md*
 			do  /bin/umount -vf ${disk}
 			done 2>&1 | logger
 
+			echo "Unmounting docker.img..."
+			logger "Unmounting docker.img..."
 			# Unmount docker.img if mounted
 			if [ -f /boot/config/docker.cfg ]; then
 				source /boot/config/docker.cfg
 				if [ "`/bin/mount | grep ${DOCKER_IMAGE_FILE}`" != "" ]; then
-					/bin/umount -vf ${DOCKER_IMAGE_FILE} 2>&1 >/dev/null
+					/bin/umount -vf ${DOCKER_IMAGE_FILE} 2>&1 >/dev/null | logger
 				fi
 			fi
 
+			echo "Unmounting libvirt.img..."
+			logger "Unmounting libvirt.img..."
 			# Unmount libvirt.img if mounted
 			if [ -f /boot/config/domain.cfg ]; then
 				source /boot/config/domain.cfg
 				if [ "`/bin/mount | grep ${IMAGE_FILE}`" != "" ]; then
-					/bin/umount -vf ${IMAGE_FILE} 2>&1 >/dev/null
+					/bin/umount -vf ${IMAGE_FILE} 2>&1 >/dev/null | logger
 				fi
 			fi
 
+			echo "Check for active pids left on the array drives..."
+			logger "Check for active pids left on the array drives..."
 			PSTMP="/tmp/ps.$$"
 			/usr/bin/fuser -mv /dev/md* 2>&1 > ${PSTMP}
 			if [ -s "${PSTMP}" ]; then
@@ -324,8 +337,8 @@ unRAID_stop()
 				/usr/bin/fuser -mv /dev/md* 2>&1 | logger
 			fi
 
-			echo "Stopping the Array"
-			logger "Stopping the Array"
+			echo "Stopping the Array..."
+			logger "Stopping the Array..."
 			cat /proc/mdcmd | tr -d '\000' > /tmp/mdcmd.$$.1
 			echo stop >/proc/mdcmd 2>&1 | logger
 			sleep 5
